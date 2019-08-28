@@ -1,0 +1,34 @@
+Tree 递归找节点
+const getRootNode = node => {
+        if (node.parent) {
+          return getRootNode(node.parent)
+        }
+        return node
+      }
+
+// 导出文件blob格式数据
+export function exportbyBlob(url, params, callback) {
+  return axios({
+    method: 'post',
+    url: url,
+    data: params,
+    responseType: 'blob'
+  }).then(res => {
+    callback && callback()
+    const blob = new Blob([res.data], {
+      type: res.data.type
+    })
+    const downloadElement = document.createElement('a')
+    const href = window.URL.createObjectURL(blob)
+    // 创建下载的链接
+    downloadElement.href = href
+    const disposition = res.headers['content-disposition']
+    const filename = disposition.split('filename=')[1]
+    downloadElement.download = decodeURI(filename)
+    // 下载后文件名
+    document.body.appendChild(downloadElement)
+    downloadElement.click()
+    document.body.removeChild(downloadElement)
+    window.URL.revokeObjectURL(href)
+  })
+}
